@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bijak Edukids - Aplikasi Pendidikan Kanak-Kanak</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 100%);
+            user-select: none;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .bounce-hover:hover {
+            transform: scale(1.05) rotate(2deg);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden text-slate-700">
+
+    <div id="app" class="flex-grow w-full max-w-md mx-auto bg-white shadow-2xl relative flex flex-col min-h-screen border-x-4 border-amber-300">
+        
+        <section id="screen-splash" class="absolute inset-0 bg-gradient-to-br from-cyan-400 via-emerald-400 to-amber-300 z-50 flex flex-col items-center justify-center text-center p-6 text-white">
+            <div class="animate-bounce mb-6">
+                <div class="w-40 h-40 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-yellow-300">
+                    <i class="fa-solid fa-owl text-6xl text-emerald-500"></i>
+                </div>
+            </div>
+            <h1 class="kids-title text-4xl tracking-wide drop-shadow-md">BIJAK EDUKIDS</h1>
+            <p class="text-lg font-bold mt-2 text-yellow-100">Belajar, Main & Jaya! 🌟</p>
+            <div class="mt-8 flex space-x-2">
+                <div class="w-4 h-4 bg-white rounded-full animate-ping"></div>
+                <div class="w-4 h-4 bg-white rounded-full animate-ping delay-75"></div>
+                <div class="w-4 h-4 bg-white rounded-full animate-ping delay-150"></div>
+            </div>
+        </section>
+
+        <section id="screen-login" class="hidden flex-grow p-6 flex flex-col justify-center bg-amber-50">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-lock text-5xl text-amber-500 mb-2"></i>
+                <h2 class="kids-title text-2xl text-amber-600">Pintu Masuk Ibu Bapa</h2>
+                <p class="text-sm text-slate-500">Sila daftar atau log masuk untuk menyimpan kemajuan anak.</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-md border-2 border-amber-200">
+                <div class="mb-4">
+                    <label class="block font-bold mb-1">Emel Ibu Bapa</label>
+                    <input type="email" id="login-email" class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-amber-400 outline-none" placeholder="ibu_bapa@email.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block font-bold mb-1">Kata Laluan</label>
+                    <input type="password" id="login-password" class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-amber-400 outline-none" placeholder="******">
+                </div>
+                <button onclick="handleAuth('login')" class="w-full bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-emerald-600 transition mb-3">Log Masuk</button>
+                <button onclick="handleAuth('register')" class="w-full bg-cyan-500 text-white font-bold py-3 rounded-xl shadow-md hover:bg-cyan-600 transition">Daftar Akaun Baru</button>
+            </div>
+        </section>
+
+        <section id="screen-profile" class="hidden flex-grow p-6 flex flex-col justify-center bg-cyan-50">
+            <div class="text-center mb-8">
+                <h2 class="kids-title text-3xl text-cyan-600">Siapa Nak Belajar?</h2>
+                <p class="text-slate-500 font-medium">Pilih profil anda untuk mula mengumpul bintang!</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4 justify-center" id="profile-list">
+                </div>
+            <div class="mt-8 text-center">
+                <button onclick="showNewProfileModal()" class="bg-amber-400 text-white font-bold px-6 py-2 rounded-full shadow hover:bg-amber-500 transition">
+                    <i class="fa-solid fa-plus mr-2"></i>Tambah Anak
+                </button>
+            </div>
+        </section>
+
+        <header id="main-header" class="hidden bg-white px-4 py-3 border-b-2 border-slate-100 flex justify-between items-center sticky top-0 z-40 shadow-sm">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center font-bold" id="header-avatar">
+                    <i class="fa-solid fa-child"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-sm leading-tight text-slate-800" id="header-child-name">Adik</h4>
+                    <span class="text-xs bg-amber-400 text-white px-2 py-0.5 rounded-full font-bold shadow-sm" id="header-stars">⭐ 0</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="changeLanguage()" id="btn-lang" class="bg-slate-100 hover:bg-slate-200 font-bold text-xs px-3 py-1.5 rounded-full border border-slate-200">BM</button>
+                <button onclick="openParentGate()" class="bg-rose-100 hover:bg-rose-200 text-rose-600 font-bold text-xs px-3 py-1.5 rounded-full border border-rose-200">
+                    <i class="fa-solid fa-user-shield mr-1"></i>Ibu Bapa
+                </button>
+            </div>
+        </header>
+
+        <main id="screen-dashboard" class="hidden flex-grow p-4 space-y-6 overflow-y-auto pb-20">
+            <div class="bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl p-5 text-white relative overflow-hidden shadow-md">
+                <div class="relative z-10">
+                    <h3 class="kids-title text-2xl" id="txt-welcome">Hai Sayang! 👋</h3>
+                    <p class="text-sm text-purple-100 mt-1">Jom teroka modul pembelajaran hari ini!</p>
+                </div>
+                <i class="fa-solid fa-rocket text-8xl text-purple-300 opacity-20 absolute -right-4 -bottom-4"></i>
+            </div>
+
+            <div>
+                <h3 class="kids-title text-xl text-slate-600 mb-3 ml-1" id="txt-menu-title">Zon Pembelajaran</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="switchScreen('screen-modul-huruf')" class="bounce-hover bg-amber-100 border-2 border-amber-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-amber-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-font"></i></div>
+                        <span class="font-bold text-amber-800">Belajar Huruf</span>
+                    </button>
+                    <button onclick="switchScreen('screen-modul-nombor')" class="bounce-hover bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-emerald-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-arrow-1-9"></i></div>
+                        <span class="font-bold text-emerald-800">Belajar Nombor</span>
+                    </button>
+                    <button onclick="switchScreen('screen-modul-warna')" class="bounce-hover bg-cyan-100 border-2 border-cyan-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-cyan-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-shapes"></i></div>
+                        <span class="font-bold text-cyan-800">Warna & Bentuk</span>
+                    </button>
+                    <button onclick="switchScreen('screen-modul-haiwan')" class="bounce-hover bg-rose-100 border-2 border-rose-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-rose-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-paw"></i></div>
+                        <span class="font-bold text-rose-800">Dunia Haiwan</span>
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="kids-title text-xl text-slate-600 mb-3 ml-1">Zon Main & Kreatif</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="initMemoryGame()" class="bounce-hover bg-purple-100 border-2 border-purple-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-purple-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-brain"></i></div>
+                        <span class="font-bold text-purple-800">Minda Memori</span>
+                    </button>
+                    <button onclick="switchScreen('screen-modul-mewarna')" class="bounce-hover bg-orange-100 border-2 border-orange-300 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm">
+                        <div class="w-14 h-14 bg-orange-400 rounded-full flex items-center justify-center text-white text-2xl shadow mb-2"><i class="fa-solid fa-palette"></i></div>
+                        <span class="font-bold text-orange-800">Mari Mewarna</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <section id="screen-modul-huruf" class="hidden flex-grow p-4 flex flex-col bg-amber-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-amber-500"></i> Kembali</button>
+                <span class="kids-title text-xl text-amber-600">ABC Interaktif</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 text-center shadow-md mb-6 border border-amber-200">
+                <div id="letter-display" class="kids-title text-8xl text-amber-500 animate-pulse my-4">A</div>
+                <p id="letter-word" class="text-2xl font-bold text-slate-600 mb-4">Ayam / Apple</p>
+                <button onclick="speakCurrentLetter()" class="bg-amber-400 text-white font-bold px-6 py-3 rounded-full shadow-lg hover:bg-amber-500 transition text-lg">
+                    <i class="fa-solid fa-volume-high mr-2"></i> Dengar Sebutan
+                </button>
+            </div>
+            <div class="grid grid-cols-5 gap-2" id="grid-alphabet">
+                </div>
+        </section>
+
+        <section id="screen-modul-nombor" class="hidden flex-grow p-4 flex flex-col bg-emerald-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-emerald-500"></i></button>
+                <span class="kids-title text-xl text-emerald-600">Kira 1 - 10</span>
+            </div>
+            <div class="bg-white rounded-2xl p-6 text-center shadow-md mb-4 border border-emerald-200">
+                <div id="number-display" class="kids-title text-8xl text-emerald-500 my-2">1</div>
+                <div id="number-objects" class="flex flex-wrap justify-center gap-2 my-4 text-3xl">
+                    🍎
+                </div>
+                <button onclick="speakCurrentNumber()" class="bg-emerald-400 text-white font-bold px-6 py-2 rounded-full shadow hover:bg-emerald-500">
+                    <i class="fa-solid fa-volume-high"></i> Sebut
+                </button>
+            </div>
+            <div class="grid grid-cols-5 gap-2" id="grid-numbers"></div>
+        </section>
+
+        <section id="screen-modul-warna" class="hidden flex-grow p-4 flex flex-col bg-cyan-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-cyan-500"></i></button>
+                <span class="kids-title text-xl text-cyan-600">Warna & Bentuk</span>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm">
+                    <h4 class="font-bold text-cyan-700 mb-2">Kenali Warna</h4>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div onclick="speakText('Merah, Red')" class="h-12 bg-red-500 rounded-xl cursor-pointer shadow"></div>
+                        <div onclick="speakText('Biru, Blue')" class="h-12 bg-blue-500 rounded-xl cursor-pointer shadow"></div>
+                        <div onclick="speakText('Kuning, Yellow')" class="h-12 bg-yellow-400 rounded-xl cursor-pointer shadow"></div>
+                        <div onclick="speakText('Hijau, Green')" class="h-12 bg-green-500 rounded-xl cursor-pointer shadow"></div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm">
+                    <h4 class="font-bold text-cyan-700 mb-2">Bentuk Geometri</h4>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+                        <div onclick="speakText('Bulat, Circle')" class="p-3 border rounded-xl flex flex-col items-center bg-slate-50">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500 mb-2"></div>Bulat
+                        </div>
+                        <div onclick="speakText('Segi empat, Square')" class="p-3 border rounded-xl flex flex-col items-center bg-slate-50">
+                            <div class="w-10 h-10 bg-amber-500 mb-2"></div>Segi Empat
+                        </div>
+                        <div onclick="speakText('Segi tiga, Triangle')" class="p-3 border rounded-xl flex flex-col items-center bg-slate-50">
+                            <div class="w-0 h-0 border-l-[20px] border-l-transparent border-r-[20px] border-r-transparent border-b-[40px] border-b-rose-500 mb-2"></div>Segi Tiga
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-modul-haiwan" class="hidden flex-grow p-4 flex flex-col bg-rose-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-rose-500"></i></button>
+                <span class="kids-title text-xl text-rose-600">Dunia Haiwan</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="playAnimal('Kucing', 'Meow! Kucing suka minum susu.')" class="bg-white p-4 rounded-2xl shadow text-center border-2 border-transparent hover:border-rose-400 cursor-pointer">
+                    <span class="text-5xl">🐱</span>
+                    <h4 class="font-bold text-lg mt-2">Kucing</h4>
+                </div>
+                <div onclick="playAnimal('Harimau', 'Roar! Harimau ialah haiwan liar.')" class="bg-white p-4 rounded-2xl shadow text-center border-2 border-transparent hover:border-rose-400 cursor-pointer">
+                    <span class="text-5xl">🐯</span>
+                    <h4 class="font-bold text-lg mt-2">Harimau</h4>
+                </div>
+                <div onclick="playAnimal('Gajah', 'Preet! Gajah mempunyai belalai panjang.')" class="bg-white p-4 rounded-2xl shadow text-center border-2 border-transparent hover:border-rose-400 cursor-pointer">
+                    <span class="text-5xl">🐘</span>
+                    <h4 class="font-bold text-lg mt-2">Gajah</h4>
+                </div>
+                <div onclick="playAnimal('Monyet', 'Uuk-uuk! Monyet suka makan pisang.')" class="bg-white p-4 rounded-2xl shadow text-center border-2 border-transparent hover:border-rose-400 cursor-pointer">
+                    <span class="text-5xl">🐵</span>
+                    <h4 class="font-bold text-lg mt-2">Monyet</h4>
+                </div>
+            </div>
+        </section>
+
+        <section id="screen-game-memory" class="hidden flex-grow p-4 flex flex-col bg-purple-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-4">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-purple-500"></i></button>
+                <span class="kids-title text-xl text-purple-600">Minda Memori</span>
+            </div>
+            <div class="grid grid-cols-4 gap-2 my-auto" id="memory-board">
+                </div>
+        </section>
+
+        <section id="screen-modul-mewarna" class="hidden flex-grow p-4 flex flex-col bg-orange-50 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-3">
+                <button onclick="switchScreen('screen-dashboard')" class="text-slate-600 text-xl font-bold"><i class="fa-solid fa-circle-arrow-left text-2xl text-orange-500"></i></button>
+                <span class="kids-title text-xl text-orange-600">Mari Mewarna</span>
+            </div>
+            <div class="bg-white rounded-xl shadow p-2 flex justify-center items-center relative">
+                <canvas id="paintCanvas" width="340" height="300" class="border border-slate-300 rounded bg-stone-50 cursor-crosshair"></canvas>
+            </div>
+            <div class="flex justify-between items-center mt-3 bg-white p-3 rounded-xl shadow">
+                <div class="flex space-x-2">
+                    <button onclick="changePaintColor('#ef4444')" class="w-8 h-8 rounded-full bg-red-500 border-2 border-white shadow"></button>
+                    <button onclick="changePaintColor('#3b82f6')" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-white shadow"></button>
+                    <button onclick="changePaintColor('#22c55e')" class="w-8 h-8 rounded-full bg-green-500 border-2 border-white shadow"></button>
+                    <button onclick="changePaintColor('#eab308')" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-white shadow"></button>
+                    <button onclick="changePaintColor('#000000')" class="w-8 h-8 rounded-full bg-black border-2 border-white shadow"></button>
+                </div>
+                <button onclick="clearCanvas()" class="bg-rose-500 text-white font-bold px-3 py-1 text-sm rounded shadow"><i class="fa-solid fa-trash mr-1"></i> Padam</button>
+            </div>
+            <p class="text-xs text-center text-slate-400 mt-2">Gunakan jari atau tetikus untuk melukis di atas kanvas.</p>
+        </section>
+
+        <section id="screen-parents" class="hidden flex-grow p-6 flex flex-col bg-slate-100 overflow-y-auto pb-20">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="exitParentMode()" class="text-slate-600 text-lg font-bold"><i class="fa-solid fa-circle-arrow-left text-xl text-slate-500"></i> Menu Anak</button>
+                <span class="font-bold text-slate-700 bg-white px-3 py-1 rounded-full shadow-sm text-sm"><i class="fa-solid fa-unlock text-emerald-500 mr-1"></i> Mode Ibu Bapa</span>
+            </div>
+            
+            <h3 class="kids-title text-2xl text-slate-800 mb-4">Statistik Prestasi</h3>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs text-slate-400 uppercase font-bold tracking-wider">Masa Penggunaan</span>
+                    <h4 class="text-2xl font-bold text-indigo-600 mt-1" id="parent-timer">0 minit</h4>
+                </div>
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <span class="text-xs text-slate-400 uppercase font-bold tracking-wider">Jumlah Bintang</span>
+                    <h4 class="text-2xl font-bold text-amber-500 mt-1" id="parent-stars">0 ⭐</h4>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                <h4 class="font-bold text-slate-700 mb-3"><i class="fa-solid fa-trophy text-yellow-400 mr-2"></i>Lencana Pencapaian Anak</h4>
+                <div class="flex space-x-3" id="parent-badges">
+                    <div class="opacity-30 text-center flex flex-col items-center" id="badge-peneroka">
+                        <span class="text-3xl">🚀</span><span class="text-[10px] font-bold mt-1">Peneroka ABC</span>
+                    </div>
+                    <div class="opacity-30 text-center flex flex-col items-center" id="badge-pakar-kira">
+                        <span class="text-3xl">🔢</span><span class="text-[10px] font-bold mt-1">Pakar Kira</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="handleLogout()" class="w-full bg-rose-500 text-white font-bold py-3 rounded-xl shadow-md mt-auto hover:bg-rose-600 transition">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>Log Keluar Akaun
+            </button>
+        </section>
+
+        <nav id="bottom-nav" class="hidden absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 h-16 flex items-center justify-around px-4 z-40">
+            <button onclick="switchScreen('screen-dashboard')" class="flex flex-col items-center justify-center text-cyan-500">
+                <i class="fa-solid fa-house text-xl"></i>
+                <span class="text-[10px] font-bold mt-0.5">Utama</span>
+            </button>
+            <button onclick="switchScreen('screen-game-memory')" class="flex flex-col items-center justify-center text-slate-400 hover:text-purple-500">
+                <i class="fa-solid fa-gamepad text-xl"></i>
+                <span class="text-[10px] font-bold mt-0.5">Main</span>
+            </button>
+            <button onclick="openParentGate()" class="flex flex-col items-center justify-center text-slate-400 hover:text-rose-500">
+                <i class="fa-solid fa-chart-pie text-xl"></i>
+                <span class="text-[10px] font-bold mt-0.5">Prestasi</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <div id="modal-new-profile" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs shadow-2xl">
+            <h3 class="kids-title text-xl text-center text-slate-700 mb-4">Daftar Profil Anak</h3>
+            <input type="text" id="new-child-name" class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl mb-4 outline-none font-bold text-center" placeholder="Nama Panggilan">
+            <div class="flex space-x-2">
+                <button onclick="closeNewProfileModal()" class="w-1/2 bg-slate-300 font-bold py-2 rounded-xl text-slate-700">Batal</button>
+                <button onclick="addNewChildProfile()" class="w-1/2 bg-emerald-500 font-bold py-2 rounded-xl text-white">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-parent-gate" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-xs text-center shadow-2xl">
+            <h3 class="font-bold text-lg text-slate-700 mb-2">Kawalan Ibu Bapa 🔒</h3>
+            <p id="gate-question" class="text-sm text-slate-500 mb-4 font-bold bg-amber-50 py-2 rounded-xl">Berapakah 5 + 4?</p>
+            <input type="number" id="gate-answer" class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl mb-4 outline-none text-center text-xl font-bold" placeholder="Jawapan anda">
+            <div class="flex space-x-2">
+                <button onclick="closeParentGate()" class="w-1/2 bg-slate-200 font-bold py-2 rounded-xl text-slate-600">Batal</button>
+                <button onclick="verifyParentGate()" class="w-1/2 bg-rose-500 font-bold py-2 rounded-xl text-white">Sahkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, update, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Firebase Configuration (As provided by user)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFS2KoxPuetZxYR2e-Ov2xp0kMmktSQbM",
+            authDomain: "bijakedukids.firebaseapp.com",
+            databaseURL: "https://bijakedukids-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "bijakedukids",
+            storageBucket: "bijakedukids.firebasestorage.app",
+            messagingSenderId: "392517972059",
+            appId: "1:392517972059:web:5d1d914663ba2ac8c80f7e"
+        };
+
+        // Initialize Firebase
+        const fbApp = initializeApp(firebaseConfig);
+        const fbAuth = getAuth(fbApp);
+        const fbDb = getDatabase(fbApp);
+
+        // State Global Aplikasi
+        window.currentUser = null;
+        window.currentChildId = null;
+        window.currentChildData = null;
+        window.appLang = 'BM';
+        window.appUsageTime = 0; // dalam minit
+
+        // Menghubungkan fungsi firebase ke tetingkap global (window) supaya boleh dipanggil dari HTML inline
+        window.handleAuth = async function(type) {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            if(!email || !pass) return alert('Sila isi maklumat!');
+            
+            try {
+                if(type === 'login') {
+                    await signInWithEmailAndPassword(fbAuth, email, pass);
+                } else {
+                    await createUserWithEmailAndPassword(fbAuth, email, pass);
+                    alert('Pendaftaran Berjaya!');
+                }
+            } catch (err) {
+                alert('Ralat: ' + err.message);
+            }
+        };
+
+        window.handleLogout = async function() {
+            await signOut(fbAuth);
+            location.reload();
+        };
+
+        // Memantau Status Auth
+        onAuthStateChanged(fbAuth, (user) => {
+            document.getElementById('screen-splash').classList.add('hidden');
+            if (user) {
+                window.currentUser = user;
+                loadProfiles();
+            } else {
+                switchScreen('screen-login');
+            }
+        });
+
+        // Pengurusan Profil Anak
+        window.loadProfiles = async function() {
+            switchScreen('screen-profile');
+            const snapshot = await get(ref(fbDb, `users/${window.currentUser.uid}/children`));
+            const container = document.getElementById('profile-list');
+            container.innerHTML = '';
+            
+            if(snapshot.exists()) {
+                const data = snapshot.val();
+                for(let key in data) {
+                    const child = data[key];
+                    container.innerHTML += `
+                        <button onclick="selectChild('${key}')" class="bg-white border-2 border-cyan-300 p-4 rounded-2xl flex flex-col items-center shadow bounce-hover">
+                            <div class="w-16 h-16 bg-cyan-100 text-cyan-500 rounded-full flex items-center justify-center text-3xl mb-2"><i class="fa-solid fa-child-holding-hand"></i></div>
+                            <span class="font-bold text-slate-700">${child.name}</span>
+                            <span class="text-xs text-amber-500 font-bold">⭐ ${child.stars || 0}</span>
+                        </button>
+                    `;
+                }
+            } else {
+                container.innerHTML = `<p class="col-span-2 text-center text-slate-400 text-sm">Belum ada profil anak dimasukkan.</p>`;
+            }
+        };
+
+        window.addNewChildProfile = async function() {
+            const name = document.getElementById('new-child-name').value;
+            if(!name) return alert('Sila isi nama anak');
+            const childId = 'child_' + Date.now();
+            
+            await set(ref(fbDb, `users/${window.currentUser.uid}/children/${childId}`), {
+                name: name,
+                stars: 0,
+                badges: { peneroka: false, pakarKira: false }
+            });
+            
+            closeNewProfileModal();
+            loadProfiles();
+        };
+
+        window.selectChild = async function(id) {
+            window.currentChildId = id;
+            const snapshot = await get(ref(fbDb, `users/${window.currentUser.uid}/children/${id}`));
+            window.currentChildData = snapshot.val();
+            
+            // Set Header UI
+            document.getElementById('header-child-name').innerText = window.currentChildData.name;
+            document.getElementById('header-stars').innerText = `⭐ ${window.currentChildData.stars || 0}`;
+            
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            switchScreen('screen-dashboard');
+            
+            // Mulakan Timer Rekod Masa
+            setInterval(() => {
+                window.appUsageTime++;
+                document.getElementById('parent-timer').innerText = `${window.appUsageTime} minit`;
+            }, 60000);
+        };
+
+        window.rewardStar = async function(amount) {
+            if(!window.currentChildId) return;
+            window.currentChildData.stars = (window.currentChildData.stars || 0) + amount;
+            
+            // Kemaskini ke Firebase
+            await update(ref(fbDb, `users/${window.currentUser.uid}/children/${window.currentChildId}`), {
+                stars: window.currentChildData.stars
+            });
+            
+            // Kemaskini Paparan UI
+            document.getElementById('header-stars').innerText = `⭐ ${window.currentChildData.stars}`;
+            document.getElementById('parent-stars').innerText = `${window.currentChildData.stars} ⭐`;
+        };
+    </script>
+
+    <script>
+        // Logik Tukar Skrin
+        function switchScreen(screenId) {
+            const screens = ['screen-login', 'screen-profile', 'screen-dashboard', 'screen-modul-huruf', 'screen-modul-nombor', 'screen-modul-warna', 'screen-modul-haiwan', 'screen-game-memory', 'screen-modul-mewarna', 'screen-parents'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function showNewProfileModal() { document.getElementById('modal-new-profile').classList.remove('hidden'); }
+        function closeNewProfileModal() { document.getElementById('modal-new-profile').classList.add('hidden'); }
+
+        // Kawalan Get Laluan Ibu Bapa (Parental Gate)
+        let num1, num2, correctAns;
+        function openParentGate() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            correctAns = num1 + num2;
+            document.getElementById('gate-question').innerText = `Sila jawab untuk pengesahan: Berapakah ${num1} + ${num2}?`;
+            document.getElementById('modal-parent-gate').classList.remove('hidden');
+        }
+        function closeParentGate() { document.getElementById('modal-parent-gate').classList.add('hidden'); }
+        function verifyParentGate() {
+            const ans = parseInt(document.getElementById('gate-answer').value);
+            if(ans === correctAns) {
+                closeParentGate();
+                document.getElementById('main-header').classList.add('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+                switchScreen('screen-parents');
+            } else {
+                alert('Jawapan salah! Hanya untuk akses ibu bapa.');
+                closeParentGate();
+            }
+            document.getElementById('gate-answer').value = '';
+        }
+        function exitParentMode() {
+            document.getElementById('main-header').classList.remove('hidden');
+            document.getElementById('bottom-nav').classList.remove('hidden');
+            switchScreen('screen-dashboard');
+        }
+
+        // Web Speech API untuk Audio Sebutan suara
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = window.appLang === 'BM' ? 'id-ID' : 'en-US'; // id-ID sebutan paling hampir untuk Bahasa Melayu baku
+                utterance.rate = 0.8; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function changeLanguage() {
+            window.appLang = window.appLang === 'BM' ? 'EN' : 'BM';
+            document.getElementById('btn-lang').innerText = window.appLang;
+            if(window.appLang === 'BM') {
+                document.getElementById('txt-welcome').innerText = "Hai Sayang! 👋";
+                document.getElementById('txt-menu-title').innerText = "Zon Pembelajaran";
+            } else {
+                document.getElementById('txt-welcome').innerText = "Hello Buddy! 👋";
+                document.getElementById('txt-menu-title').innerText = "Learning Zone";
+            }
+        }
+
+        // Modul Huruf ABC
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+        let currentLetter = 'A';
+        const sampleWords = {
+            'A': 'Ayam / Apple', 'B': 'Bola / Ball', 'C': 'Cawan / Cat', 'D': 'Duku / Dog', 'E': 'Emas / Elephant',
+            'F': 'Feri / Fish', 'G': 'Gajah / Goat', 'H': 'Harimau / Horse', 'I': 'Ikan / Iguana', 'J': 'Jam / Jug',
+            'K': 'Katak / Kite', 'L': 'Lori / Lion', 'M': 'Monyet / Monkey', 'N': 'Nanas / Nest', 'O': 'Oren / Orange',
+            'P': 'Pisang / Penguin', 'Q': 'Qari / Queen', 'R': 'Rusa / Rabbit', 'S': 'Susu / Sun', 'T': 'Tikus / Tiger',
+            'U': 'Ular / Umbrella', 'V': 'Van / Violin', 'W': 'Wau / Window', 'X': 'Xilofon / Xylophone', 'Y': 'Yoyo / Yo-yo', 'Z': 'Zebra / Zoo'
+        };
+
+        function initAlphabetModule() {
+            const grid = document.getElementById('grid-alphabet');
+            grid.innerHTML = '';
+            letters.forEach(l => {
+                grid.innerHTML += `<button onclick="selectLetter('${l}')" class="bg-white font-bold p-2 rounded shadow text-amber-600 hover:bg-amber-400 hover:text-white transition">${l}</button>`;
+            });
+        }
+        function selectLetter(l) {
+            currentLetter = l;
+            document.getElementById('letter-display').innerText = l;
+            document.getElementById('letter-word').innerText = sampleWords[l];
+            speakCurrentLetter();
+            if(typeof rewardStar === "function") rewardStar(1); // Ganjaran 1 bintang setiap kali belajar huruf baru
+        }
+        function speakCurrentLetter() {
+            speakText(currentLetter + ". " + sampleWords[currentLetter]);
+        }
+
+        // Modul Nombor
+        let currentNum = 1;
+        function initNumberModule() {
+            const grid = document.getElementById('grid-numbers');
+            grid.innerHTML = '';
+            for(let i=1; i<=10; i++) {
+                grid.innerHTML += `<button onclick="selectNumber(${i})" class="bg-white font-bold p-2 rounded shadow text-emerald-600 hover:bg-emerald-400 hover:text-white transition">${i}</button>`;
+            }
+        }
+        function selectNumber(num) {
+            currentNum = num;
+            document.getElementById('number-display').innerText = num;
+            const objContainer = document.getElementById('number-objects');
+            objContainer.innerHTML = '🍎'.repeat(num);
+            speakCurrentNumber();
+            if(typeof rewardStar === "function") rewardStar(1);
+        }
+        function speakCurrentNumber() {
+            speakText(currentNum.toString());
+        }
+
+        // Modul Haiwan
+        function playAnimal(nama, fakta) {
+            speakText(nama + ". " + fakta);
+            if(typeof rewardStar === "function") rewardStar(2);
+        }
+
+        // Game Memori Mudah
+        let memoryItems = ['🐱', '🐱', '🐶', '🐶', '🦊', '🦊', '🐸', '🐸', '🦁', '🦁', '🐵', '🐵', '🐷', '🐷', '🐨', '🐨'];
+        let choiceStack = [];
+        function initMemoryGame() {
+            switchScreen('screen-game-memory');
+            const board = document.getElementById('memory-board');
+            board.innerHTML = '';
+            // Susun Rawak
+            memoryItems.sort(() => 0.5 - Math.random());
+            memoryItems.forEach((item, index) => {
+                board.innerHTML += `
+                    <div id="card-${index}" onclick="flipCard(${index}, '${item}')" class="h-16 bg-purple-400 rounded-xl flex items-center justify-center text-3xl font-bold text-transparent cursor-pointer select-none shadow">
+                        ${item}
+                    </div>
+                `;
+            });
+        }
+        function flipCard(idx, icon) {
+            const card = document.getElementById(`card-${idx}`);
+            if(card.classList.contains('text-white') || choiceStack.length >= 2) return;
+            
+            card.classList.remove('text-transparent', 'bg-purple-400');
+            card.classList.add('text-white', 'bg-purple-600');
+            choiceStack.push({idx, icon});
+
+            if(choiceStack.length === 2) {
+                if(choiceStack[0].icon === choiceStack[1].icon) {
+                    choiceStack = [];
+                    if(typeof rewardStar === "function") rewardStar(5); // Dapat 5 bintang jika padanan betul
+                } else {
+                    setTimeout(() => {
+                        const c1 = document.getElementById(`card-${choiceStack[0].idx}`);
+                        const c2 = document.getElementById(`card-${choiceStack[1].idx}`);
+                        c1.classList.remove('text-white', 'bg-purple-600'); c1.classList.add('text-transparent', 'bg-purple-400');
+                        c2.classList.remove('text-white', 'bg-purple-600'); c2.classList.add('text-transparent', 'bg-purple-400');
+                        choiceStack = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        // Logik Kanvas Aktiviti Mewarna
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+        let paintColor = '#000000';
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchstart', (e) => { startPosition(e.touches[0]); });
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', (e) => { draw(e.touches[0]); e.preventDefault(); });
+
+        function startPosition(e) { painting = true; draw(e); }
+        function endPosition() { painting = false; ctx.beginPath(); }
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = paintColor;
+
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+        function changePaintColor(color) { paintColor = color; }
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        // Panggilan Automatik Mulakan Modul sebaik sahaja fail dibuka
+        initAlphabetModule();
+        initNumberModule();
+    </script>
+
+</body>
+</html>
