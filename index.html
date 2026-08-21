@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grammar Hub - Primary School English</title>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -420,11 +421,30 @@
             cursor: pointer;
             box-shadow: 0 4px 0 #E65100;
             margin: 5px;
+            text-decoration: none;
         }
 
         .action-btn:active {
             transform: translateY(2px);
             box-shadow: 0 2px 0 #E65100;
+        }
+
+        .login-whatsapp-btn {
+            background-color: #25D366;
+            box-shadow: 0 4px 0 #1EBE5D;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .login-whatsapp-btn:hover {
+            background-color: #1EBE5D;
+        }
+
+        .login-whatsapp-btn:active {
+            box-shadow: 0 2px 0 #1EBE5D;
         }
 
         .home-btn {
@@ -674,8 +694,10 @@
 </head>
 <body>
 
+    <!-- MOBILE TOGGLE BUTTON -->
     <button class="mobile-toggle" id="mobile-toggle-btn" onclick="toggleSidebar(event)">☰</button>
 
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="https://i.imgur.com/vPd4cjj.jpeg" alt="Grammar Hub Logo">
@@ -702,9 +724,11 @@
         </ul>
     </div>
 
+    <!-- MAIN CONTENT AREA -->
     <div class="main-content">
         <div class="container">
 
+            <!-- 1. LOGIN SCREEN -->
             <div id="login-screen" class="card active">
                 <h1 style="font-family: 'Fredoka One', cursive; color: #FF5757; margin-bottom: 10px;">Grammar Hub</h1>
                 <h2>Welcome Back! 👋</h2>
@@ -719,14 +743,24 @@
                     <input type="password" id="login-password" class="form-input" placeholder="••••••••">
                 </div>
                 <button class="action-btn" style="display:inline-block; width: 100%;" onclick="playClickSound(); handleLogin()">Log In 🚀</button>
+                
+                <!-- SEKSYEN CONTACT US PADA PAPARAN LOG IN -->
+                <div style="margin-top: 25px; border-top: 2px dashed #DDD; padding-top: 20px;">
+                    <p style="font-weight: 700; color: #555; margin-bottom: 10px; font-size: 1rem;">Contact Us</p>
+                    <a href="https://wa.me/60196818139" target="_blank" class="action-btn login-whatsapp-btn" onclick="playClickSound()">
+                        💬 WhatsApp
+                    </a>
+                </div>
             </div>
 
+            <!-- 2. PROFILE SELECTION / ADD SCREEN -->
             <div id="profile-selection-screen" class="card">
                 <h2>Who is Learning? 🧒👧</h2>
                 <p style="color: #666; margin-top: 5px;">Select a student profile or add a new one.</p>
                 
                 <div class="profile-list-box" id="profile-selection-list">
-                    </div>
+                    <!-- Profile buttons populated dynamically -->
+                </div>
 
                 <div style="margin-top: 20px; border-top: 2px dashed #DDD; padding-top: 15px;">
                     <h3>Add New Profile</h3>
@@ -737,6 +771,7 @@
                 </div>
             </div>
 
+            <!-- 3. HOME SCREEN -->
             <div id="home-screen" class="card">
                 <div class="home-header">
                     <img src="https://i.imgur.com/vPd4cjj.jpeg" alt="Grammar Hub Logo" class="home-app-logo">
@@ -766,6 +801,7 @@
                 </div>
             </div>
 
+            <!-- 4. LESSON SCREEN -->
             <div id="lesson-screen" class="card">
                 <h2 style="color: #333;">Lesson Time! 📖</h2>
                 <div class="lesson-box">
@@ -781,6 +817,7 @@
                 <button class="action-btn home-btn" onclick="playClickSound(); navigateTo('home-screen')">Home 🏠</button>
             </div>
 
+            <!-- SCREEN PILIH BILANGAN SOALAN -->
             <div id="count-selection-screen" class="card">
                 <h2 style="color: #5E17EB; font-family: 'Fredoka One', cursive;">Select Question Count 📝</h2>
                 <p style="color: #666; margin-top: 5px;">How many questions would you like to answer?</p>
@@ -795,6 +832,7 @@
                 <button class="action-btn home-btn" onclick="playClickSound(); navigateTo('home-screen')">Back to Home 🏠</button>
             </div>
 
+            <!-- 5. PROFILES & ACCOUNT MANAGEMENT VIEW -->
             <div id="profile-view-screen" class="card">
                 <h2>Account & Profiles 👤</h2>
                 <div class="profile-card-details">
@@ -821,6 +859,7 @@
                 <button class="action-btn home-btn" style="width: 100%; margin: 0;" onclick="playClickSound(); navigateTo('home-screen')">Back to Home 🏠</button>
             </div>
 
+            <!-- 6. SCORES HISTORY SCREEN -->
             <div id="scores-screen" class="card">
                 <h2 style="color: #333;">🏆 Quiz Attempt History</h2>
                 <p style="color: #666; margin-top: 5px;">Records of every quiz session completed!</p>
@@ -836,7 +875,8 @@
                             </tr>
                         </thead>
                         <tbody id="score-records-body">
-                            </tbody>
+                            <!-- Loaded via JS -->
+                        </tbody>
                     </table>
                 </div>
                 <br>
@@ -844,6 +884,7 @@
                 <button class="action-btn clear-btn" onclick="playClickSound(); clearHistory()">Clear History 🗑️</button>
             </div>
 
+            <!-- 7. QUIZ SCREEN (STANDARD MULTIPLE CHOICE) -->
             <div id="quiz-screen" class="card">
                 <div class="quiz-header">
                     <span id="topic-title">Topic</span>
@@ -856,7 +897,8 @@
                 </div>
 
                 <div id="options-container" class="options-grid">
-                    </div>
+                    <!-- Option buttons -->
+                </div>
 
                 <div class="quiz-action-container">
                     <button id="next-btn" class="action-btn" style="display:none;" onclick="playClickSound(); nextQuestion()">Next Question ➔</button>
@@ -864,6 +906,7 @@
                 </div>
             </div>
 
+            <!-- 7B. SPELLING QUIZ SCREEN (DRAG & DROP LETTERS) -->
             <div id="spelling-quiz-screen" class="card">
                 <div class="quiz-header">
                     <span>SPELLING</span>
@@ -879,8 +922,10 @@
 
                 <p style="font-weight: 700; color: #555; margin-bottom: 5px;">Drag or tap letters into the boxes below:</p>
                 
+                <!-- Huruf Kosong Tempat Masuk -->
                 <div id="slots-container" class="slots-container"></div>
 
+                <!-- Pilihan Huruf di Bawah -->
                 <div id="letter-bank" class="bank-container"></div>
 
                 <div class="quiz-action-container" style="margin-top: 20px;">
@@ -889,6 +934,7 @@
                 </div>
             </div>
 
+            <!-- 8. RESULT SCREEN -->
             <div id="result-screen" class="card">
                 <h2>Awesome Job! 🎉</h2>
                 <p>You have completed the quiz!</p>
@@ -902,6 +948,7 @@
         </div>
     </div>
 
+    <!-- FIREBASE SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { 
